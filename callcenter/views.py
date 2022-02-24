@@ -7,8 +7,6 @@ from datetime import date
 from rest_framework.parsers import MultiPartParser, FormParser
 
 
-# Create your views here.
-
 
 class AllCallerView(generics.ListAPIView):
 
