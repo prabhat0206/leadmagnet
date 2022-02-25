@@ -22,6 +22,7 @@ ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "leadmagnet.pythonanywhere.com"]
 # Application definition
 
 INSTALLED_APPS = [
+    'vendor.apps.VendorConfig',
     'callcenter.apps.CallcenterConfig',
     'django.contrib.admin',
     'django.contrib.auth',
