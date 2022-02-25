@@ -6,5 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('rest/calls/', include('callcenter.urls')),
+    path('rest/vendor/', include('vendor.urls')),
     path('rest/auth/login', obtain_auth_token, name='login'),
 ]
