@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.utils.decorators import method_decorator
 from config.decorators import allowed_users
 
-@method_decorator(allowed_users(allowed_roles = {"admin"}), name = "post")
+@method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 class RegisterView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
@@ -27,7 +27,7 @@ class RegisterView(generics.CreateAPIView):
         else:
             return Response({"success": new_user.is_valid()})
 
-@method_decorator(allowed_users(allowed_roles = {"admin"}), name = "post")
+@method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 class AddPermissions(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
