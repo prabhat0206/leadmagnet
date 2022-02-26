@@ -4,15 +4,15 @@ def allowed_users(allowed_roles = set):
     def decorator(view_func):
         def wrapper_func(request, *args, **kwargs):
             
-            userGroups = set()
+            userGroups = dict()
             if request.user.groups.exists():
-                [userGroups.add(group.name) for group in request.user.groups.all()]
+                [userGroups.update({group.name: True}) for group in request.user.groups.all()]
             
-            if userGroups.issubset(allowed_roles) or allowed_roles.issubset(userGroups):
-                return view_func(request, *args, **kwargs)
+            for role in allowed_roles:
+                if userGroups.get(role) and role != "vendor":    
+                    return view_func(request, *args, **kwargs)
             
-            else:
-                return Response("You are not authorized to view this page")
+            return Response("You are not authorized to view this page")
         
         return wrapper_func
     
