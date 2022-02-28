@@ -11,7 +11,7 @@ from config.decorators import allowed_users
 
 
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "callcenter"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "callcenter"]), name = "get")
 class AllCallerView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -23,7 +23,7 @@ class AllCallerView(generics.ListAPIView):
         paginated = self.paginate_queryset(all_calls.data)
         return self.get_paginated_response(paginated)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "callcenter"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "callcenter"]), name = "get")
 class TodayCalls(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -35,7 +35,7 @@ class TodayCalls(generics.ListAPIView):
         today_date = CallerSerializer(today_calls, many=True)
         return Response(today_date.data)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "callcenter", "reception"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "callcenter", "reception"]), name = "get")
 class HandsOverToRecp(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -47,7 +47,7 @@ class HandsOverToRecp(generics.ListAPIView):
         paginated = self.paginate_queryset(serialized.data)
         return self.get_paginated_response(paginated)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "callcenter"}), name = "post")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "callcenter"]), name = "post")
 class AddCalls(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -61,7 +61,7 @@ class AddCalls(generics.CreateAPIView):
         
         return {"Success": False, "Error": str(data.errors)}
 
-@method_decorator(allowed_users(allowed_roles = {"vendor"}), name = "update")
+@method_decorator(allowed_users(allowed_roles = ["vendor"]), name = "update")
 class UpdateCalls(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -76,7 +76,7 @@ class UpdateCalls(generics.UpdateAPIView):
             return Response({"Success": True, "data": serialized.data})
         return Response({"Success": False, "Errors": str(serialized.errors)})
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "councelor", "operations"}), name = "post")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "councelor", "operations"]), name = "post")
 class UploadFiles(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Uploades.objects
@@ -89,7 +89,7 @@ class UploadFiles(generics.CreateAPIView):
             return Response({"Success": True})
         return Response({"Success": False, "Error": str(data.errors)})
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "councelor", "reception"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "councelor", "reception"]), name = "get")
 class CallsAtCounselor(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -101,7 +101,7 @@ class CallsAtCounselor(generics.ListAPIView):
         paginated = self.paginate_queryset(serialized.data)
         return self.get_paginated_response(paginated)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "reception"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "reception"]), name = "get")
 class DiscardedCallsAtRec(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -113,7 +113,7 @@ class DiscardedCallsAtRec(generics.ListAPIView):
         paginated = self.paginate_queryset(serialized.data)
         return self.get_paginated_response(paginated)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "reception"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "reception"]), name = "get")
 class NewCallsAtRecp(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -132,7 +132,7 @@ class NewCallsAtRecp(generics.ListAPIView):
         serialized = self.serializer_class(data, many=True)
         return Response(serialized.data)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "councelor"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "councelor"]), name = "get")
 class NeedConc(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -150,7 +150,7 @@ class NeedConc(generics.ListAPIView):
         serialized = self.serializer_class(data, many=True)
         return Response(serialized.data)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "operations"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "operations"]), name = "get")
 class RegisteredCalls(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -162,7 +162,7 @@ class RegisteredCalls(generics.ListAPIView):
         paginated = self.paginate_queryset(serialized.data)
         return self.get_paginated_response(paginated)
 
-@method_decorator(allowed_users(allowed_roles = {"vendor", "operations", "reception"}), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "operations", "reception"]), name = "get")
 class CallsAtOpterator(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
