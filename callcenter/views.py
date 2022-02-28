@@ -76,7 +76,7 @@ class UpdateCalls(generics.UpdateAPIView):
             return Response({"Success": True, "data": serialized.data})
         return Response({"Success": False, "Errors": str(serialized.errors)})
 
-@method_decorator(allowed_users(allowed_roles = ["vendor", "councelor", "operations"]), name = "post")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "counselor", "operations"]), name = "post")
 class UploadFiles(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Uploades.objects
@@ -89,7 +89,7 @@ class UploadFiles(generics.CreateAPIView):
             return Response({"Success": True})
         return Response({"Success": False, "Error": str(data.errors)})
 
-@method_decorator(allowed_users(allowed_roles = ["vendor", "councelor", "reception"]), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "counselor", "reception"]), name = "get")
 class CallsAtCounselor(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
@@ -132,7 +132,7 @@ class NewCallsAtRecp(generics.ListAPIView):
         serialized = self.serializer_class(data, many=True)
         return Response(serialized.data)
 
-@method_decorator(allowed_users(allowed_roles = ["vendor", "councelor"]), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "counselor"]), name = "get")
 class NeedConc(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
