@@ -46,4 +46,6 @@ class AddPermissions(generics.CreateAPIView):
             return Response({"success": True, "msg": "permissions updated"})    
         except:
             return Response({"success": False, "msg": "something went wrong, try again"})
-      
+
+ 
+# TODO: VENDOR DETAILS API
