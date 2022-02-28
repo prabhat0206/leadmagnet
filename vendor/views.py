@@ -26,17 +26,34 @@ class RegisterView(generics.CreateAPIView):
             return Response({"success": True})
         else:
             return Response({"success": new_user.is_valid()})
-
+@method_decorator(allowed_users(allowed_roles = ["admin", "vendor"]), name = "get")
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
-class AddPermissions(generics.CreateAPIView):
+@method_decorator(allowed_users(allowed_roles = ["vendor"]), name = "put")
+class VendorUser(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def post(self, request):
+    def get(self, request, id):
+        try:
+            user = self.get_queryset().filter(id = id).first()
+            userData = self.serializer_class(user, many = False).data
+            
+            permissions = dict()
+            [permissions.update({group.name: False}) for group in Group.objects.exclude(name = "admin")]
+            for group in userData["groups"]:
+                groupName = Group.objects.filter(id = group).first().name
+                permissions[groupName] = True
+                
+            userData["groups"] = permissions    
+            return Response({"success": True, "user": userData})
+        except:
+            return Response({"success": False, "msg": f"something went wrong, try again"})    
+    
+    def post(self, request, id):
         try:
             data = request.data
-            current_user = self.get_queryset().get(id = data["id"])
+            current_user = self.get_queryset().get(id = id)
             permissions = data["permissions"]
 
             for permission in permissions:
@@ -47,4 +64,35 @@ class AddPermissions(generics.CreateAPIView):
         except:
             return Response({"success": False, "msg": "something went wrong, try again"})
 
+    def put(self, request, id):
+        try:
+            data = request.data
+            user = self.get_queryset().filter(id = id).first()
+            
+            updates = []
+            for field in data:
+                if field in ["address", "phone", "first_name", "last_name"]:
+                    setattr(user, field, data["field"])
+                    updates.append(field)
+                else:
+                    return Response({"success": False, "msg": "not allowed to change these fields"})    
+            
+            user.save(update_fields = updates)
+            return Response({"success": True, "msg": "user updated"})
+        except:
+            return Response({"success": False, "msg": "something went wrong, try again"})    
+
+@method_decorator(allowed_users(allowed_roles = ["admin"]), name = "get")
+class GetVendors(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects
+    serializer_class = UserSerializer
+    
+    def get(self, request):
+        try:
+            data = self.get_queryset().filter(groups__name = "vendor").order_by("-id")
+            serialized = self.serializer_class(data, many = True)
+            return Response({"sucess": True, "list": serialized.data})
+        except:
+            return Response({"success": False, "msg": "something went wrong, try again"})
         
