@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from django.contrib.auth.models import Group
 from django.utils.decorators import method_decorator
 from config.decorators import allowed_users
+from django.core.mail import send_mail
+import os
 
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 class RegisterView(generics.CreateAPIView):
@@ -23,6 +25,19 @@ class RegisterView(generics.CreateAPIView):
             user = new_user.save()
             group = Group.objects.filter(name = "vendor").first()
             group.user_set.add(user)
+            
+            email_plaintext_message = f"Login Details for Leadmagnet Vendor : {request.data.get('username')}\n\nemail : {request.data.get('email')}\npassword : {request.data.get('password')}"
+
+            send_mail(
+                # title:
+                "Leadmagnet Login Details",
+                # message:
+                email_plaintext_message,
+                # from:
+                os.environ.get("EMAIL"),
+                # to:
+                [request.data.get('email')]
+            )
             return Response({"success": True})
         else:
             return Response({"success": new_user.is_valid()})
