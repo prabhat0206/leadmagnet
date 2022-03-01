@@ -85,7 +85,7 @@ class VendorUser(generics.CreateAPIView):
     def put(self, request):
         try:
             data = request.data
-            user = self.get_queryset().filter(id = id).first()
+            user = request.user
             
             updates = []
             for field in data:
