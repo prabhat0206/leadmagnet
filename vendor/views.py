@@ -16,31 +16,35 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
     def post(self, request):
-        exist_user_check = self.get_queryset().filter(email=request.data.get('email')).first()
-        if exist_user_check:
-            return Response({"error": "Email already in use"})
-        new_user = self.serializer_class(data = request.data)
-        
-        if new_user.is_valid():
-            user = new_user.save()
-            group = Group.objects.filter(name = "vendor").first()
-            group.user_set.add(user)
-            
-            email_plaintext_message = f"Login Details for Leadmagnet Vendor : {request.data.get('username')}\n\nemail : {request.data.get('email')}\npassword : {request.data.get('password')}"
+        try:
+            print(request.data)
+            exist_user_check = self.get_queryset().filter(email=request.data.get('email')).first()
+            if exist_user_check:
+                return Response({"error": "Email already in use"})
+            new_user = self.serializer_class(data = request.data)
 
-            send_mail(
-                # title:
-                "Leadmagnet Login Details",
-                # message:
-                email_plaintext_message,
-                # from:
-                os.environ.get("EMAIL"),
-                # to:
-                [request.data.get('email')]
-            )
-            return Response({"success": True})
-        else:
-            return Response({"success": new_user.is_valid()})
+            if new_user.is_valid():
+                user = new_user.save()
+                group = Group.objects.filter(name = "vendor").first()
+                group.user_set.add(user)
+
+                email_plaintext_message = f"Login Details for Leadmagnet Vendor : {request.data.get('username')}\n\nemail : {request.data.get('email')}\npassword : {request.data.get('password')}"
+
+                send_mail(
+                    # title:
+                    "Leadmagnet Login Details",
+                    # message:
+                    email_plaintext_message,
+                    # from:
+                    os.environ.get("EMAIL"),
+                    # to:
+                    [request.data.get('email')]
+                )
+                return Response({"success": True})
+            else:
+                return Response({"success": new_user.is_valid()})
+        except:
+            return Response({"success": False, "msg": "something went wrong, try again"})    
 @method_decorator(allowed_users(allowed_roles = ["admin", "vendor"]), name = "get")
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 @method_decorator(allowed_users(allowed_roles = ["vendor"]), name = "put")

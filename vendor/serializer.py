@@ -5,7 +5,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ["password", "user_permissions"]
+        exclude = ["user_permissions"]
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
