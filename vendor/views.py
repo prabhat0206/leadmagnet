@@ -45,9 +45,9 @@ class RegisterView(generics.CreateAPIView):
                 return Response({"success": new_user.is_valid()})
         except:
             return Response({"success": False, "msg": "something went wrong, try again"})    
-@method_decorator(allowed_users(allowed_roles = ["admin", "vendor"]), name = "get")
+@method_decorator(allowed_users(allowed_roles = ["admin", "vendor", "callcenter", "operations", "reception", "counselor"]), name = "get")
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
-@method_decorator(allowed_users(allowed_roles = ["vendor"]), name = "put")
+@method_decorator(allowed_users(allowed_roles = ["vendor", "callcenter", "operations", "reception", "counselor"]), name = "put")
 class VendorUser(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
