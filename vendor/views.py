@@ -91,7 +91,7 @@ class VendorUser(generics.CreateAPIView):
             updates = []
             for field in data:
                 if field in ["address", "phone", "first_name", "last_name"]:
-                    setattr(user, field, data["field"])
+                    setattr(user, field, data[field])
                     updates.append(field)
                 else:
                     return Response({"success": False, "msg": "not allowed to change these fields"})    
