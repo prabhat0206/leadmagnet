@@ -17,7 +17,6 @@ class RegisterView(generics.CreateAPIView):
 
     def post(self, request):
         try:
-            print(request.data)
             exist_user_check = self.get_queryset().filter(email=request.data.get('email')).first()
             if exist_user_check:
                 return Response({"error": "Email already in use"})
@@ -53,9 +52,9 @@ class VendorUser(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def get(self, request, id):
+    def get(self, request, id = None):
         try:
-            user = self.get_queryset().filter(id = id).first()
+            user = self.get_queryset().filter(id = id).first() if id else request.user
             userData = self.serializer_class(user, many = False).data
             
             permissions = dict()
@@ -83,7 +82,7 @@ class VendorUser(generics.CreateAPIView):
         except:
             return Response({"success": False, "msg": "something went wrong, try again"})
 
-    def put(self, request, id):
+    def put(self, request):
         try:
             data = request.data
             user = self.get_queryset().filter(id = id).first()
