@@ -1,10 +1,8 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import django_heroku
 
 load_dotenv()
-django_heroku.settings(locals())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -161,3 +159,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL")
 EMAIL_HOST_PASSWORD = os.environ.get("PASSWORD")
 DEFAULT_FROM_EMAIL = os.environ.get("EMAIL")
+
+import django_heroku
+django_heroku.settings(locals())
