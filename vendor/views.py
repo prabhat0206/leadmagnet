@@ -9,6 +9,11 @@ from config.decorators import allowed_users
 from django.core.mail import send_mail
 import os
 
+
+# usersd = User.objects.get(id=1)
+# group = Group.objects.filter(name = "vendor").first()
+# group.user_set.add(usersd)
+
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 class RegisterView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -43,7 +48,9 @@ class RegisterView(generics.CreateAPIView):
             else:
                 return Response({"success": new_user.is_valid()})
         except:
-            return Response({"success": False, "msg": "something went wrong, try again"})    
+            return Response({"success": False, "msg": "something went wrong, try again"})   
+
+
 @method_decorator(allowed_users(allowed_roles = ["admin", "vendor", "callcenter", "operations", "reception", "counselor"]), name = "get")
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 @method_decorator(allowed_users(allowed_roles = ["vendor", "callcenter", "operations", "reception", "counselor"]), name = "put")

@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
+from django.contrib.auth.models import User
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
@@ -29,6 +30,7 @@ class Caller(models.Model):
     isRegistered = models.BooleanField(default=False)
     isDocumentMissing = models.BooleanField(default=False)
     remark = models.TextField(blank=True, null=True)
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Uploades(models.Model):
