@@ -14,6 +14,6 @@ urlpatterns = [
     path('latest_call_at_coun', NeedConc.as_view(), name='latest_call_at_coun'),
     path('registered', RegisteredCalls.as_view(), name='registered'),
     path('calls_at_opt', CallsAtOpterator.as_view(), name='calls_at_opt'),
-    
+    path('stats', StatsView.as_view(), name='stats'),
 ]
 
