@@ -15,5 +15,6 @@ urlpatterns = [
     path('registered', RegisteredCalls.as_view(), name='registered'),
     path('calls_at_opt', CallsAtOpterator.as_view(), name='calls_at_opt'),
     path('stats', StatsView.as_view(), name='stats'),
+    path('needs_to_follow', NeedsFollowUp.as_view() , name='needs_to_follow')
 ]
 
