@@ -1,13 +1,12 @@
 from rest_framework import generics
 from .serializer import *
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from django.contrib.auth.models import Group
 from django.utils.decorators import method_decorator
 from config.decorators import allowed_users
 from django.core.mail import send_mail
-import os
 
 
 # usersd = User.objects.get(id=1)
@@ -16,7 +15,7 @@ import os
 
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 class RegisterView(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -29,31 +28,31 @@ class RegisterView(generics.CreateAPIView):
 
             if new_user.is_valid():
                 user = new_user.save()
-                group = Group.objects.filter(name = "vendor").first()
-                group.user_set.add(user)
-
-                email_plaintext_message = f"Login Details for Leadmagnet Vendor : {request.data.get('username')}\n\nemail : {request.data.get('email')}\npassword : {request.data.get('password')}"
-
+                permissions = request.data["permissions"]
+                for permission in permissions:
+                    group = Group.objects.get(name = permission)
+                    group.user_set.add(user)
+                email_plain_text_message = f"Login Details for Leadmagnet Vendor : {request.data.get('username')}\n\nemail : {request.data.get('email')}\npassword : {request.data.get('password')}"
                 send_mail(
                     # title:
                     "Leadmagnet Login Details",
                     # message:
-                    email_plaintext_message,
+                    email_plain_text_message,
                     # from:
-                    os.environ.get("EMAIL"),
+                    "noreplyleadmagnet@sanganastery.live",
                     # to:
                     [request.data.get('email')]
                 )
-                return Response({"success": True})
+                return Response({"Success": True})
             else:
-                return Response({"success": new_user.is_valid()})
+                return Response({"Success": new_user.is_valid()})
         except:
-            return Response({"success": False, "msg": "something went wrong, try again"})   
+            return Response({"Success": False, "msg": "something went wrong, try again"})   
 
 
 @method_decorator(allowed_users(allowed_roles = ["admin", "vendor", "callcenter", "operations", "reception", "counselor"]), name = "get")
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
-@method_decorator(allowed_users(allowed_roles = ["vendor", "callcenter", "operations", "reception", "counselor"]), name = "put")
+@method_decorator(allowed_users(allowed_roles = ["admin", "vendor", "callcenter", "operations", "reception", "counselor"]), name = "put")
 class VendorUser(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
@@ -71,23 +70,10 @@ class VendorUser(generics.CreateAPIView):
                 permissions[groupName] = True
                 
             userData["groups"] = permissions    
-            return Response({"success": True, "user": userData})
+            return Response({"Success": True, "user": userData})
         except:
-            return Response({"success": False, "msg": f"something went wrong, try again"})    
+            return Response({"Success": False, "msg": f"something went wrong, try again"})    
     
-    def post(self, request, id):
-        try:
-            data = request.data
-            current_user = self.get_queryset().get(id = id)
-            permissions = data["permissions"]
-
-            for permission in permissions:
-                group = Group.objects.get(name = permission)
-                group.user_set.add(current_user)    
-            
-            return Response({"success": True, "msg": "permissions updated"})    
-        except:
-            return Response({"success": False, "msg": "something went wrong, try again"})
 
     def put(self, request):
         try:
@@ -100,12 +86,13 @@ class VendorUser(generics.CreateAPIView):
                     setattr(user, field, data[field])
                     updates.append(field)
                 else:
-                    return Response({"success": False, "msg": "not allowed to change these fields"})    
+                    return Response({"Success": False, "msg": "not allowed to change these fields"})    
             
             user.save(update_fields = updates)
-            return Response({"success": True, "msg": "user updated"})
+            return Response({"Success": True, "msg": "user updated"})
         except:
-            return Response({"success": False, "msg": "something went wrong, try again"})    
+            return Response({"Success": False, "msg": "something went wrong, try again"})    
+
 
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "get")
 class GetVendors(generics.ListAPIView):
@@ -115,9 +102,9 @@ class GetVendors(generics.ListAPIView):
     
     def get(self, request):
         try:
-            data = self.get_queryset().filter(groups__name = "vendor").order_by("-id")
+            data = self.get_queryset().filter(is_superuser=False).order_by("-id")
             serialized = self.serializer_class(data, many = True)
-            return Response({"sucess": True, "list": serialized.data})
+            return Response({"Success": True, "list": serialized.data})
         except:
-            return Response({"success": False, "msg": "something went wrong, try again"})
+            return Response({"Success": False, "msg": "something went wrong, try again"})
         
