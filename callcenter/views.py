@@ -98,7 +98,7 @@ class AddCalls(generics.CreateAPIView):
             data.save()
             return Response({"Success": True})
         
-        return {"Success": False, "Error": str(data.errors)}
+        return {"Success": False, "Error": "Something went wrong"}
 
 
 @method_decorator(allowed_users(allowed_roles = ["admin", "vendor"]), name = "update")

@@ -45,7 +45,7 @@ class RegisterView(generics.CreateAPIView):
                 )
                 return Response({"Success": True})
             else:
-                return Response({"Success": new_user.is_valid()})
+                return Response({"Success": new_user.is_valid(), "Error": new_user.error})
         except:
             return Response({"Success": False, "msg": "something went wrong, try again"})   
 
