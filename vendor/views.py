@@ -19,7 +19,15 @@ class LoginToken(ObtainAuthToken):
             user = serialized.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
             serialized_user = UserSerializer(user).data
-            del serialized_user['password']
+            serialized_user['permissions'] = dict()
+            groups = Group.objects.all()
+            for group in groups:
+                if group.name != "admin":
+                    if group in user.groups.all():
+                        serialized_user['permissions'][group.name] = True
+                    else:
+                        serialized_user['permissions'][group.name] = False
+            del serialized_user['password'], serialized_user["groups"]
             return Response({"Success": True, "token": token.key, "user": serialized_user})
         return Response({"Success": False, "Error": "Invalid login credentials"})
 
