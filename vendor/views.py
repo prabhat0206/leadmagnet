@@ -7,11 +7,22 @@ from django.contrib.auth.models import Group
 from django.utils.decorators import method_decorator
 from config.decorators import allowed_users
 from django.core.mail import send_mail
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 
-# usersd = User.objects.get(id=1)
-# group = Group.objects.filter(name = "vendor").first()
-# group.user_set.add(usersd)
+class LoginToken(ObtainAuthToken):
+
+    def post(self, request):
+        serialized = self.serializer_class(data=request.data, context={'request': request})
+        if serialized.is_valid():
+            user = serialized.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)
+            serialized_user = UserSerializer(user).data
+            del serialized_user['password']
+            return Response({"Success": True, "token": token.key, "user": serialized_user})
+        return Response({"Success": False, "Error": "Invalid login credentials"})
+
 
 @method_decorator(allowed_users(allowed_roles = ["admin"]), name = "post")
 class RegisterView(generics.CreateAPIView):
