@@ -101,7 +101,6 @@ class AddCalls(generics.CreateAPIView):
         return {"Success": False, "Error": "Something went wrong"}
 
 
-@method_decorator(allowed_users(allowed_roles = ["admin", "vendor"]), name = "update")
 class UpdateCalls(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Caller.objects
