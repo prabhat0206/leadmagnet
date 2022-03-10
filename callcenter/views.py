@@ -217,7 +217,7 @@ class CallsAtOpterator(generics.ListAPIView):
     serializer_class = CallerSerializer
 
     def get(self, request):
-        data = self.get_queryset().filter(vendor=request.user, needsToFollow=True).order_by('-id')
+        data = self.get_queryset().filter(vendor=request.user, at_operations=True, isRegistered=False, needsToFollow=False).order_by('-id')
         serialized = self.serializer_class(data, many=True)
         paginated = self.paginate_queryset(serialized.data)
         return self.get_paginated_response(paginated)
@@ -230,7 +230,7 @@ class NeedsFollowUp(generics.ListAPIView):
     serializer_class = CallerSerializer
 
     def get(self, request):
-        data = self.get_queryset().filter(vendor=request.user, at_operations=True, isRegistered=False).order_by('-id')
+        data = self.get_queryset().filter(vendor=request.user, needsToFollow=True, isRegistered=False).order_by('-id')
         serialized = self.serializer_class(data, many=True)
         paginated = self.paginate_queryset(serialized.data)
         return self.get_paginated_response(paginated)
